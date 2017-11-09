@@ -30,7 +30,7 @@ class miniVU {
      * Constructor. Initializes miniVU with the target element to append views to.
      * @param {class or id selector} targetElementSelector 
      */
-    constructor(targetElementSelector) {
+    constructor(targetElementSelector, config = {}) {
         this.ready = false;
         this.currentView = null;
         this.contentBuffer = null;
