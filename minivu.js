@@ -12,18 +12,17 @@ Website: https://github.com/shawnmcla/miniVU
  */
 const CONFIG = {
     "viewsDir": "./views",
-
 }
+
 const ERROR_MSGS = {
     "GENERIC_HELP": "For more help and documentation, see https://github.com/shawnmcla/miniVU",
     "INVALID_SELECTOR": "The targetElementSelector parameter must be a non-empty string.",
     "ELEMENT_NOT_FOUND": "The targetElementSelector passed cannot be found in the DOM.",
     "VIEW_NOT_FOUND": "The associated HTML document for the view specified could not be found. Check that the file exists and is in the correct directory.",
-
 }
 
 const version = "0.0.2";
-console.log("miniVU version " + version);
+console.log("miniVU beta version " + version);
 
 class miniVU {
 
@@ -60,6 +59,7 @@ class miniVU {
         }
     }
 
+    /** Loads an HTML document from the filename given and returns a promise which resolves with the HTML document */
     loadHTMLContent(fileName) {
         return new Promise(function (resolve, reject) {
             let xhr = new XMLHttpRequest();
@@ -88,32 +88,33 @@ class miniVU {
         });
     }
 
+    /** Clear the target area to make space for the new content */
     clearContent() {
-        while(this.targetArea.hasChildNodes()){
+        while (this.targetArea.hasChildNodes()) {
             this.targetArea.removeChild(this.targetArea.lastChild);
         }
     }
-
+    /** Append the nodes of the newly loaded content to the target area */
     appendContent(content) {
         content.body.childNodes.forEach((node) => this.targetArea.appendChild(node));
     }
-
+    /** Takes HTML content, makes a call to clear the target area and then a call to append the new content. */
     swapContent(content) {
         console.log("Swapping to " + content);
         this.clearContent();
         this.appendContent(content);
     }
-
+    /** Initiate the view changing process */
     go(view, file) {
         if (view !== this.currentView) {
-            this.loadHTMLContent(file ? file : view + ".html")
+            this.loadHTMLContent(view + ".html")
                 .then((content) => this.swapContent(content))
                 .catch((e) => console.error("Error loading content.", e));
         }
     }
 
     /** Error display functions. Prints a console.error message. */
-    /** TODO: Display error in target area for errors that aren't related to finding the area itself. */ errorInvalidSelector(targetElementSelector) {
+    errorInvalidSelector(targetElementSelector) {
         console.error(ERROR_MSGS.INVALID_SELECTOR);
     }
     errorTargetNotFound(targetElementSelector) {
