@@ -68,11 +68,7 @@ class miniVU {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) { // 200: HTTP OK
                         console.log(xhr.response);
-                        // Clone the object to a class member since xhr's scope is limited to this function and therefore references would be lost.
-                        this.contentBuffer = Object.assign({}, xhr.response);
-                        this.contentBuffer = "poop";
-                        console.log("contentBuffer set to " + this.contentBuffer);
-                        resolve();
+                        resolve(xhr.response);
                     } else {
                         console.debug("Error");
                         errorViewNotfound(fileName);
@@ -93,24 +89,25 @@ class miniVU {
     }
 
     clearContent() {
-        this.targetArea.childNodes.forEach(
-            (child) => this.targetArea.removeChild(child));
+        while(this.targetArea.hasChildNodes()){
+            this.targetArea.removeChild(this.targetArea.lastChild);
+        }
     }
 
     appendContent(content) {
-        this.targetArea.innerHTML = content;
+        content.body.childNodes.forEach((node) => this.targetArea.appendChild(node));
     }
 
-    swapContent() {
-        console.log("Swapping to " + this.contentBuffer);
+    swapContent(content) {
+        console.log("Swapping to " + content);
         this.clearContent();
-        this.appendContent(this.contentBuffer);
+        this.appendContent(content);
     }
 
     go(view, file) {
         if (view !== this.currentView) {
             this.loadHTMLContent(file ? file : view + ".html")
-                .then(this.swapContent)
+                .then((content) => this.swapContent(content))
                 .catch((e) => console.error("Error loading content.", e));
         }
     }
@@ -127,3 +124,5 @@ class miniVU {
     }
 }
 
+
+let m = new miniVU("#miniVUContent");
