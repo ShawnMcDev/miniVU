@@ -22,74 +22,108 @@ const ERROR_MSGS = {
 
 }
 
-const version = "0.0.1";
-
-let contentArea;
+const version = "0.0.2";
 console.log("miniVU version " + version);
 
-/**
- * Sets the target parent element to which the view is appended.
- targetElementSelector: id or class of the element. If a class is used, the first occurence is used.
- */
-const miniVU = function (targetElementSelector) {
-    let element;
-    if (targetElementSelector != null && typeof (targetElementSelector == string)) {
-        if (targetElementSelector[0] === ".") { // If selector is a class selector
-            element = document.getElementsByClassName(targetElementSelector.substr(1))[0];
+class miniVU {
+
+    /**
+     * Constructor. Initializes miniVU with the target element to append views to.
+     * @param {class or id selector} targetElementSelector 
+     */
+    constructor(targetElementSelector) {
+        this.ready = false;
+        this.currentView = null;
+        this.contentBuffer = null;
+        this.targetArea = null;
+
+        let element;
+
+        if (targetElementSelector != null && typeof (targetElementSelector == String)) {
+            if (targetElementSelector[0] === ".") { // If selector is a class selector
+                element = document.getElementsByClassName(targetElementSelector.substr(1))[0];
+            } else if (targetElementSelector[0] === "#") { // If selector is an ID selector
+                element = document.getElementById(targetElementSelector.substr(1));
+            }
+            else {
+                this.errorInvalidSelector();
+            }
             if (element) {
-                contentArea = element;
+                this.targetArea = element;
+                this.ready = true;
             }
-        } else if (targetElementSelector[0] === "#") { // If selector is an ID selector
-            element = document.getElementById(targetElementSelector.substr(1))[0];
+            else {
+                this.errorTargetNotFound();
+            }
+        } else {
+            console.error("targetElementSelector parameter must be a non-empty string.");
         }
-        else {
-            errorInvalidSelector();
-        }
-        if (element) {
-            contentArea = element;
-        }
-        else {
-            errorTargetNotFound();
-        }
-    } else {
-        console.error("targetElementSelector parameter must be a non-empty string.");
     }
-}
 
-function loadHTMLContent(fileName, callback) {
-    let xhr = new XMLHttpRequest();
+    loadHTMLContent(fileName) {
+        return new Promise(function (resolve, reject) {
+            let xhr = new XMLHttpRequest();
 
-    xhr.onload = function (e) {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) { // 200: HTTP OK
-                //TODO: Display HTML data
-                console.log(xhr.response);
-                return callback(xhr.response);
-            } else {
+            xhr.onload = function (e) {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) { // 200: HTTP OK
+                        console.log(xhr.response);
+                        // Clone the object to a class member since xhr's scope is limited to this function and therefore references would be lost.
+                        this.contentBuffer = Object.assign({}, xhr.response);
+                        this.contentBuffer = "poop";
+                        console.log("contentBuffer set to " + this.contentBuffer);
+                        resolve();
+                    } else {
+                        console.debug("Error");
+                        errorViewNotfound(fileName);
+                        reject(xhr.statusText);
+                    }
+                }
+            }
+
+            xhr.onerror = function (e) {
                 errorViewNotfound(fileName);
-                return;
+                reject(xhr.statusText);
             }
+
+            xhr.open("GET", CONFIG.viewsDir + "/" + fileName, true);
+            xhr.responseType = "document";
+            xhr.send();
+        });
+    }
+
+    clearContent() {
+        this.targetArea.childNodes.forEach(
+            (child) => this.targetArea.removeChild(child));
+    }
+
+    appendContent(content) {
+        this.targetArea.innerHTML = content;
+    }
+
+    swapContent() {
+        console.log("Swapping to " + this.contentBuffer);
+        this.clearContent();
+        this.appendContent(this.contentBuffer);
+    }
+
+    go(view, file) {
+        if (view !== this.currentView) {
+            this.loadHTMLContent(file ? file : view + ".html")
+                .then(this.swapContent)
+                .catch((e) => console.error("Error loading content.", e));
         }
     }
 
-    xhr.onerror = function (e) {
-        errorViewNotfound(fileName);
-        return;
+    /** Error display functions. Prints a console.error message. */
+    /** TODO: Display error in target area for errors that aren't related to finding the area itself. */ errorInvalidSelector(targetElementSelector) {
+        console.error(ERROR_MSGS.INVALID_SELECTOR);
     }
+    errorTargetNotFound(targetElementSelector) {
+        console.error(ERROR_MSGS.ELEMENT_NOT_FOUND);
+    }
+    errorViewNotfound(fileName) {
+        console.error(ERROR_MSGS.VIEW_NOT_FOUND + " File name: " + fileName + ", Views directory: " + CONFIG.viewsDir);
+    }
+}
 
-    xhr.open("GET", CONFIG.viewsDir + "/" + fileName, true);
-    xhr.responseType = "document";
-
-    xhr.send();
-}
-/** Error display functions. Prints a console.error message. */
-/** TODO: Display error in target area for errors that aren't related to finding the area itself. */
-function errorInvalidSelector(targetElementSelector) {
-    console.error(ERROR_MSGS.INVALID_SELECTOR);
-}
-function errorTargetNotFound(targetElementSelector) {
-    console.error(ERROR_MSGS.ELEMENT_NOT_FOUND);
-}
-function errorViewNotfound(fileName) {
-    console.error(ERROR_MSGS.VIEW_NOT_FOUND + " File name: " + fileName + ", Views directory: " + CONFIG.viewsDir);
-}
