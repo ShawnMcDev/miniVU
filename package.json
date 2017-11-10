@@ -1,0 +1,33 @@
+{
+  "name": "minivu",
+  "version": "1.0.0",
+  "description": "A minimalistic HTML/JS view engine.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shawnmcla/miniVU.git",
+    "build": "babel src/minivu.js -o lib/minivu.min.js"
+  },
+  "keywords": [
+    "javascript",
+    "view",
+    "engine",
+    "html"
+  ],
+  "author": "Shawn McLaughlin <shawnmcdev@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shawnmcla/miniVU/issues"
+  },
+  "homepage": "https://github.com/shawnmcla/miniVU#readme",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-minify": "^0.2.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1"
+  }
+}
