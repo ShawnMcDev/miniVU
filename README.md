@@ -5,13 +5,13 @@
 miniVU is an ultra-simple view engine for single-page websites. 
 
 Overview:
-* Easy to use: No programming knowledge required.
+* Easy to use: No JavaScript programming knowledge required.
 * Customization options
 * Tiny! ( < 6KB, minified )
 * Open-Source, MIT Licensed
-* No dependencies!
-* Plugin support in the near future™
-* Fast! Performance benchmarks coming soon™ 
+* No dependencies
+* Plugin support in the near future™ (e.g. support for template engines)
+* Fast!
 
 Have a peak at miniVU in action [here](https://shawnmcdev.github.io/miniVU/demo/index.html)
 
@@ -83,6 +83,6 @@ Create an empty container element that will host the various views of your websi
 <a href="#/services>Services</a>
 ```
 
-Clicking these link will trigger a "onhashchange" event in the browser, which miniVU intercepts and then uses to determine which view to display.
+Clicking these link will trigger a "onhashchange" event in the browser, which miniVU intercepts and then uses to determine which view to display. Notice how the Home link simply links to the root. Navigating to the root (the "*real*" page) will always display the *default view* specified in the constructor.
 
 That's the basics. Hopefully it's simple enough to your taste! For more information on configuration of things such as custom page titles, custom 404 errors, and more. See [the docs](#) (Coming soon!).
