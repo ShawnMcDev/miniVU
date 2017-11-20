@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src/minivu.js -o lib/minivu.min.js && copy lib\\minivu.min.js demo\\minivu.min.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shawnmcla/miniVU.git",
-    "build": "babel src/minivu.js -o lib/minivu.min.js"
+    "url": "git+https://github.com/shawnmcla/miniVU.git"
   },
   "keywords": [
     "javascript",
