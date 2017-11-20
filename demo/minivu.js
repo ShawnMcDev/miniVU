@@ -89,7 +89,7 @@ class miniVU {
 
     /** Push view data to history to ensure BACK and FORWARD button functionality */
     pushState(viewName) {
-        history.replaceState({ isView: true, viewName: viewName }, null, "#/" + viewName);
+        history.replaceState({ isView: true, viewName: viewName }, null, viewName === this.defaultView ? "" : "#/" + viewName);
     }
 
     /** Called when a hash change is detected */
@@ -101,7 +101,6 @@ class miniVU {
                 this.loadDefaultView();
             } else {
                 this.go(viewName);
-                this.pushState(viewName);
             }
         }
     }
@@ -109,7 +108,7 @@ class miniVU {
     /** Load the specified default view */
     loadDefaultView() {
         if (this.defaultView !== null) {
-            this.go(this.defaultView);
+            this.go(this.defaultView, null, true);
         } else {
             console.info(ERROR_MSGS.NO_DEFAULT_VIEW);
         }
@@ -121,14 +120,13 @@ class miniVU {
         let hash = location.hash;
         if (this.isMiniVUHash(hash)) {
             let viewName = hash.substr(2);
-            if (viewName === "") {
-                this.loadDefaultView();
-            } else {
+            if (viewName !== "") {
                 this.go(viewName);
+                return;
             }
-        } else {
-            this.go(this.defaultView);
         }
+        this.loadDefaultView();
+        return;
     }
 
     /** Returns true if the hash begins with "#/" */
@@ -197,6 +195,7 @@ class miniVU {
             }
             document.title = this.CONFIG.titlePattern.replace(this.TITLE_PLACEHOLDER, title);
         }
+        this.pushState(view);
     }
 
     /** Initiate the view changing process */
