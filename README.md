@@ -5,7 +5,8 @@
 miniVU is an ultra-simple view engine for single-page websites. 
 
 Overview:
-* Easy to use: No JavaScript programming knowledge required.
+* Easy to use: No JavaScript programming knowledge required
+* Completely client-side. Ideal for basic, static hosting (such as GitHub pages!)
 * Customization options
 * Tiny! ( < 6KB, minified )
 * Open-Source, MIT Licensed
