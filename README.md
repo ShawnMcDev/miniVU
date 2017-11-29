@@ -44,8 +44,10 @@ Set up your website directory structure as such:
      |--- aboutus.html
      |--- contact.html
      |--- services.html
+```
 
 Include the miniVU library on the page where you wish to use it, at the bottom of the <body> element:
+     
   ```HTML
   ...
   <script src="minivu.min.js"></script>
